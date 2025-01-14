@@ -52,6 +52,8 @@ def get_coupon(name: str) -> Coupon:
     }
     if coupon[2]:
         coupon_raw["condition"] = json.loads(coupon[2])
+    if coupon[3]:
+        coupon_raw["validity"] = json.loads(coupon[3])
 
     return Coupon.model_validate(coupon_raw)
 
