@@ -14,7 +14,8 @@ cursor.execute("""
 CREATE TABLE IF NOT EXISTS coupon (
     name TEXT UNIQUE PRIMARY KEY,
     discount TEXT,
-    condition TEXT
+    condition TEXT,
+    validity TEXT
 );               
 """)
 connection.commit()
@@ -24,13 +25,16 @@ def add_coupon(args):
     coupon_data = {"name": args.name, "discount": args.discount}
     if args.condition:
         coupon_data["condition"] = json.loads(args.condition)
+    if args.validity:
+        coupon_data["validity"] = json.loads(args.validity)
 
     coupon = Coupon.model_validate(coupon_data)
 
     condition = coupon.condition.model_dump_json() if coupon.condition else ""
+    validity = coupon.validity.to_json_string() if coupon.validity else ""
     cursor.execute(
-        "INSERT INTO coupon VALUES ('%s', '%s', '%s')"
-        % (coupon.name, coupon.discount_raw, condition)
+        "INSERT INTO coupon VALUES ('%s', '%s', '%s', '%s')"
+        % (coupon.name, coupon.discount_raw, condition, validity)
     )
     connection.commit()
 
@@ -122,6 +126,7 @@ def cli():
     add_coupon_parser = subparsers.add_parser("add_coupon")
     add_coupon_parser.add_argument("name", type=str)
     add_coupon_parser.add_argument("discount", type=str)
+    add_coupon_parser.add_argument("validity", type=str)
     add_coupon_parser.add_argument("condition", type=str)
     add_coupon_parser.set_defaults(func=add_coupon)
 

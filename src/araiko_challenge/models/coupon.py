@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import Any, NamedTuple
 
@@ -16,6 +17,12 @@ class CouponCondition(BaseModel):
 class CouponValidity(NamedTuple):
     start: datetime
     end: datetime
+
+    def to_json_string(self) -> str:
+        return json.dumps(
+            self._asdict(),
+            default=lambda o: o.isoformat() if isinstance(o, datetime) else o,
+        )
 
 
 class Coupon(BaseModel):
