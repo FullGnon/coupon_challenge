@@ -17,3 +17,5 @@ secrets*
 .idea/
 
 .vscode
+
+coupon.db
