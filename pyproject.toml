@@ -23,4 +23,4 @@ quote-style = "double"
 indent-style = "space"
 
 [project.scripts]
-soldes = "araiko_challenge.main:cli"
+soldes = "araiko_challenge.legacy:cli"
