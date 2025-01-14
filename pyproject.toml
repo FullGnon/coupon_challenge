@@ -5,6 +5,7 @@ description = "Araïko challenge for thomas lechauve"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "fastapi[standard]>=0.115.6",
     "pydantic>=2.10.5",
 ]
 
