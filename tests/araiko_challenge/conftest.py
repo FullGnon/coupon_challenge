@@ -25,7 +25,7 @@ class InMemoryCouponStorage(CouponStorage):
     async def get(self, name: str) -> Coupon | None:
         return self.data.get(name, None)
 
-    async def create(self, coupon: CouponCreate) -> None:
+    async def create(self, coupon: CouponCreate) -> Coupon:
         if coupon.name in self.data:
             raise IndexError
 
@@ -33,7 +33,7 @@ class InMemoryCouponStorage(CouponStorage):
 
         return self.data[coupon.name]
 
-    async def update(self, coupon: CouponUpdate):
+    async def update(self, coupon: CouponUpdate) -> Coupon:
         if coupon.name not in self.data:
             raise IndexError
 
@@ -41,7 +41,7 @@ class InMemoryCouponStorage(CouponStorage):
 
         return self.data[coupon.name]
 
-    async def delete(self, name: str):
+    async def delete(self, name: str) -> None:
         if name not in self.data:
             raise IndexError
 
