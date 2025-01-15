@@ -25,11 +25,22 @@ class CouponValidity(NamedTuple):
         )
 
 
-class Coupon(BaseModel):
+class CouponBase(BaseModel):
     name: str
-    discount: NonNegativeInt
     condition: CouponCondition | None = None
     validity: CouponValidity | None = None
+
+    @model_validator(mode="after")
+    def check_valid_period(self) -> "Coupon":
+        if self.validity and self.validity.start > self.validity.end:
+            msg = "Invalid period, start > end"
+            raise ValueError(msg)
+
+        return self
+
+
+class Coupon(CouponBase):
+    discount: NonNegativeInt
     is_percent: bool = False
 
     @model_validator(mode="before")
@@ -41,7 +52,7 @@ class Coupon(BaseModel):
 
             if isinstance(data["discount"], str) and data["discount"].endswith("%"):
                 data["is_percent"] = True
-                data["discount"] = data["discount"][:-1]
+                data["discount"] = int(data["discount"][:-1])
 
             # TODO: add a check to cap percent discount below 100%
 
@@ -51,10 +62,14 @@ class Coupon(BaseModel):
     def discount_raw(self: "Coupon") -> str:
         return f"{self.discount}%" if self.is_percent else self.discount
 
-    @model_validator(mode="after")
-    def check_valid_period(self) -> "Coupon":
-        if self.validity and self.validity.start > self.validity.end:
-            msg = "Invalid period, start > end"
-            raise ValueError(msg)
 
-        return self
+class CouponDTO(CouponBase):
+    model_config = ConfigDict(extra="forbid")
+
+
+class CouponCreate(CouponDTO):
+    discount: NonNegativeInt | str
+
+
+class CouponUpdate(CouponDTO):
+    discount: NonNegativeInt | str | None = None

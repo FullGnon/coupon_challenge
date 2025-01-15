@@ -37,3 +37,23 @@ To run the API within a docker container use docker:
 ```bash
 docker compose up
 ```
+
+## Running tests
+
+You can run the tests effortlessly using uv by executing the following command:
+
+```bash
+uv run pytest
+```
+
+## Linting and Formatting the Code
+
+To maintain code quality, it's a good idea to use automated tools for linting and formatting. While a pre-commit hook could handle this automatically, for this challenge, I am running the commands manually.
+
+You can lint and format your code with the following command:
+
+```bash
+uvx ruff check --fix && uvx ruff format
+```
+
+Additionally, I recommend using mypy to ensure type safety throughout the project.

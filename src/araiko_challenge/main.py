@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 
+from araiko_challenge.routers import coupons
+
 app = FastAPI()
-
-
-@app.get("/")
-async def read_root():
-    return {"Hello": "World"}
+app.include_router(coupons.router)
