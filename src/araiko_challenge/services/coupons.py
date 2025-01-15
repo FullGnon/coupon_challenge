@@ -25,11 +25,17 @@ class CouponApplicabilityService:
         # We handle the case where the fixed discount is greater than the price by
         return max(price - discount, 0)
 
-    def apply_discount(self, coupon: Coupon, product: Product) -> int:
-        if coupon.is_percent:
-            return self._apply_percent_discount(coupon.discount, product.price)
+    def apply_discount(self, coupon: Coupon, product: Product) -> Product:
+        apply_method = (
+            self._apply_percent_discount
+            if coupon.is_percent
+            else self._apply_fixed_discount
+        )
+        discounted_product = product.model_copy(
+            update={"price": apply_method(coupon.discount, product.price)}
+        )
 
-        return self._apply_fixed_discount(coupon.discount, product.price)
+        return discounted_product
 
     def coupon_is_valid(self, coupon: Coupon) -> bool:
         # If coupon has no validity period, it means it is always valid

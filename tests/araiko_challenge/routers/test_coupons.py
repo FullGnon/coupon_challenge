@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from araiko_challenge.models.coupon import Coupon
+from araiko_challenge.models.product import Product
 from araiko_challenge.routers.coupons import COUPONS_ROUTE_PREFIX
 from araiko_challenge.services.storage import CouponStorage
 
@@ -171,3 +172,113 @@ def test_delete_coupon_should_return_404_with_missing_coupon(
 ) -> None:
     response = fake_api.delete(f"{COUPONS_ROUTE_PREFIX}/coupon_1")
     assert response.status_code == 404
+
+
+@pytest.mark.parametrize(
+    "mock_storage",
+    [
+        pytest.param([Coupon(name="coupon_1", discount=10)], id="Fixed discount"),
+        pytest.param([Coupon(name="coupon_1", discount="10%")], id="Percent discount"),
+        pytest.param(
+            [
+                Coupon(
+                    name="coupon_1",
+                    discount=10,
+                    validity={"start": "2015-01-01", "end": "2036-01-01"},
+                )
+            ],
+            id="Coupon with validity period",
+        ),
+        pytest.param(
+            [Coupon(name="coupon_1", discount=10, condition={"price_above": 80})],
+            id="Coupon with price threshold condition",
+        ),
+        pytest.param(
+            [Coupon(name="coupon_1", discount=10, condition={"category": "food"})],
+            id="Coupon with category condition",
+        ),
+    ],
+    indirect=True,
+)
+def test_apply_product_should_apply_discount_on_valid_product(
+    fake_api: TestClient,
+) -> None:
+    product = Product(name="product", price=100, category="food")
+    response = fake_api.post(
+        f"{COUPONS_ROUTE_PREFIX}/coupon_1/apply_product", json=product.model_dump()
+    )
+    assert response.status_code == 200
+    assert Product.model_validate(response.json()) == product.model_copy(
+        update={"price": 90}
+    )
+
+
+def test_apply_product_should_return_404_with_missing_coupon(
+    fake_api: TestClient,
+) -> None:
+    product = Product(name="product", price=100, category="food")
+    response = fake_api.post(
+        f"{COUPONS_ROUTE_PREFIX}/coupon_1/apply_product", json=product.model_dump()
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.parametrize(
+    "mock_storage",
+    [
+        pytest.param(
+            [
+                Coupon(
+                    name="coupon_1",
+                    discount=10,
+                    validity={"start": "2015-01-01", "end": "2016-01-01"},
+                )
+            ],
+            id="Coupon with invalid period",
+        ),
+        pytest.param(
+            [Coupon(name="coupon_1", discount=10, condition={"price_above": 120})],
+            id="Coupon with invalid price threshold condition",
+        ),
+        pytest.param(
+            [
+                Coupon(
+                    name="coupon_1", discount=10, condition={"category": "electronics"}
+                )
+            ],
+            id="Coupon with wrong category condition",
+        ),
+    ],
+    indirect=True,
+)
+def test_apply_product_should_return_422_if_coupon_is_not_applicable(
+    fake_api: TestClient,
+) -> None:
+    product = Product(name="product", price=100, category="food")
+    response = fake_api.post(
+        f"{COUPONS_ROUTE_PREFIX}/coupon_1/apply_product", json=product.model_dump()
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.parametrize(
+    ("product"),
+    [
+        pytest.param({"name": "product"}, id="Incomplete product"),
+        pytest.param(
+            {"name": "product", "price": 10, "category": "cloth"}, id="Unknown category"
+        ),
+        pytest.param(
+            {"name": "product", "price": 10, "category": "food", "vip": True},
+            id="Extra parameter are forbidden",
+        ),
+    ],
+)
+def test_apply_product_should_return_422_with_invalid_product(
+    product: dict,
+    fake_api: TestClient,
+) -> None:
+    response = fake_api.post(
+        f"{COUPONS_ROUTE_PREFIX}/coupon_1/apply_product", json=product
+    )
+    assert response.status_code == 422

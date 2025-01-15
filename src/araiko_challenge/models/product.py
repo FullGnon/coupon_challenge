@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, NonNegativeInt
+from pydantic import BaseModel, ConfigDict, NonNegativeInt
 
 
 class ProductCategory(StrEnum):
@@ -10,6 +10,8 @@ class ProductCategory(StrEnum):
 
 
 class Product(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     name: str
     price: NonNegativeInt
     category: ProductCategory

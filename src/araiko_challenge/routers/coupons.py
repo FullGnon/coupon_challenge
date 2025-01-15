@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from araiko_challenge.dependencies import get_coupon_storage
+from araiko_challenge.dependencies import get_coupon_service, get_coupon_storage
 from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from araiko_challenge.models.product import Product
+from araiko_challenge.services.coupons import CouponApplicabilityService
 from araiko_challenge.services.storage import CouponStorage
 
 COUPONS_ROUTE_PREFIX = "/coupons"
@@ -80,3 +82,26 @@ async def delete_coupon(
         )
 
     await coupon_storage.delete(name)
+
+
+@router.post("/{name}/apply_product", status_code=200)
+async def apply_product(
+    name: str,
+    product: Product,
+    coupon_storage: CouponStorage = Depends(get_coupon_storage),
+    coupon_service: CouponApplicabilityService = Depends(get_coupon_service),
+) -> Product:
+    existing_coupon = await coupon_storage.get(name)
+    if not existing_coupon:
+        raise HTTPException(
+            status_code=404, detail="Coupon with this name does not exists"
+        )
+
+    if not coupon_service.coupon_is_applicable(existing_coupon, product):
+        raise HTTPException(
+            status_code=422, detail="The coupon is not applicable to this product"
+        )
+
+    discounted_product = coupon_service.apply_discount(existing_coupon, product)
+
+    return discounted_product

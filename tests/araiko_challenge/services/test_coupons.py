@@ -14,19 +14,19 @@ from araiko_challenge.services.coupons import CouponApplicabilityService
         pytest.param(
             Coupon(name="coupon", discount=10),
             Product(name="product", price=100, category="food"),
-            90,
+            Product(name="product", price=90, category="food"),
             id="Apply fixed discount",
         ),
         pytest.param(
             Coupon(name="coupon", discount="10%"),
             Product(name="product", price=100, category="food"),
-            90,
+            Product(name="product", price=90, category="food"),
             id="Apply percent discount",
         ),
         pytest.param(
             Coupon(name="coupon", discount=200),
             Product(name="product", price=100, category="food"),
-            0,
+            Product(name="product", price=0, category="food"),
             id="Apply greater fixed discount should returns 0",
         ),
     ],
@@ -34,7 +34,7 @@ from araiko_challenge.services.coupons import CouponApplicabilityService
 def test_apply_discount(
     coupon: Coupon,
     product: Product,
-    expected_result: int,
+    expected_result: Product,
     coupon_service: CouponApplicabilityService,
 ) -> None:
     assert coupon_service.apply_discount(coupon, product) == expected_result
