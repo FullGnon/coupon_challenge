@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from araiko_challenge.dependencies import get_coupon_storage
 from araiko_challenge.main import app
 from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from araiko_challenge.services.coupons import CouponApplicabilityService
 from araiko_challenge.services.storage import CouponStorage
 
 T = TypeVar("T")
@@ -58,3 +59,8 @@ def fake_api(mock_storage: CouponStorage) -> YieldFixture[TestClient]:
     app.dependency_overrides[get_coupon_storage] = lambda: mock_storage
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def coupon_service() -> CouponApplicabilityService:
+    return CouponApplicabilityService()
