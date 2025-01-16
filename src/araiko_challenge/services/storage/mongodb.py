@@ -44,7 +44,8 @@ class MongoDBCouponStorage(CouponStorage):
             raise CouponStorageNotFoundError()
 
         # Remove id to build Coupon
-        del coupon_data["_id"]
+        if "_id" in coupon_data:
+            del coupon_data["_id"]
 
         return Coupon.model_validate(coupon_data)
 
