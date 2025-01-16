@@ -1,4 +1,3 @@
-from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from araiko_challenge.dependencies import get_coupon_service, get_coupon_storage

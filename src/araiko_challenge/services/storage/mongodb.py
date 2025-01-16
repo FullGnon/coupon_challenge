@@ -1,6 +1,7 @@
 from typing import ClassVar
 
 from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import MongoDsn
 from pymongo.server_api import ServerApi
 
 from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
@@ -24,8 +25,8 @@ class MongoDBCouponStorage(CouponStorage):
     collection_name: ClassVar[str] = "coupons"
 
     # FIXME: use settings to get db_uri
-    def __init__(self, db_uri: str = "mongodb://admin:password@127.0.0.1:27017/"):
-        self.client = AsyncIOMotorClient(db_uri, server_api=ServerApi("1"))
+    def __init__(self, db_uri: str | MongoDsn):
+        self.client = AsyncIOMotorClient(str(db_uri), server_api=ServerApi("1"))
         self.collection = self.client["challenge"][self.collection_name]
 
     # @catch_mongodb_error_and_rollback

@@ -21,22 +21,35 @@ The venv will be automatically created and synced based on pyproject.toml.
 ## Run the API
 
 ### Dev mode
+
+#### Requirements:
+In order to configure the application in dev mode you need to create a dotfile `.env` containing settings:
+
+```bash
+ARAIKO_CHALLENGE_DB_BACKEND=mongo
+ARAIKO_CHALLENGE_MONGO_DB_URI=mongodb://admin:password@127.0.0.1:27017/
+```
+
 To run the API in dev mode, execute the following command:
 
 ```bash
-uv run fastapi dev src/araiko_challenge/main.py
+uv run --env-file .env fastapi dev src/araiko_challenge/main.py
 ```
 The API will be available at: http://127.0.0.1:8000
 Swagger documentation can be accessed at: http://127.0.0.1:8000/docs
 
 This setup provides automatic reloading for easier development and testing.
 
-### docker mode
+### Docker mode
 To run the API within a docker container use docker:
 
 ```bash
 docker compose up
 ```
+
+Everything is already configured to work right away.
+
+That's all folks ;)
 
 ## Running tests
 

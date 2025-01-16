@@ -20,8 +20,8 @@ class SQLiteCouponStorage(CouponStorage):
     table_name: ClassVar[str] = "coupons"
 
     def __init__(self, db_path: str = "coupon.db"):
-        # Warn Log something about this backend being deprecated 
-        self.conn = sqlite3.connect(db_path)
+        # Warn Log something about this backend being deprecated
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self._initialize_table()
 
@@ -39,13 +39,13 @@ class SQLiteCouponStorage(CouponStorage):
 
     def _from_rowdict_to_coupon(self, row: dict) -> Coupon:
         coupon_raw = {
-            "name": row[0],
-            "discount": row[1],
+            "name": row["name"],
+            "discount": row["discount"],
         }
-        if row[2]:
-            coupon_raw["condition"] = json.loads(row[2])
-        if row[3]:
-            coupon_raw["validity"] = json.loads(row[3])
+        if row["condition"]:
+            coupon_raw["condition"] = json.loads(row["condition"])
+        if row["validity"]:
+            coupon_raw["validity"] = json.loads(row["validity"])
 
         return Coupon.model_validate(coupon_raw)
 
@@ -127,3 +127,6 @@ class SQLiteCouponStorage(CouponStorage):
 
         self.conn.execute(f"DELETE FROM {self.table_name} WHERE name = '{name}';")
         self.conn.commit()
+
+    def close(self) -> None:
+        self.conn.close()

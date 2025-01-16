@@ -61,7 +61,7 @@ def mock_find_one_minimal_coupon(mock_mongo_collection, minimal_coupon):
 
 @pytest.fixture
 def mongo_storage(mock_mongo_collection) -> MongoDBCouponStorage:
-    return MongoDBCouponStorage()
+    return MongoDBCouponStorage(db_uri="fake_db_uri")
 
 
 @pytest.mark.asyncio
