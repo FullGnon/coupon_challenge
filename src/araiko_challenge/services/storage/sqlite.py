@@ -101,7 +101,7 @@ class SQLiteCouponStorage(CouponStorage):
         SET
             discount = ?,
             validity = ?,
-            condition = ?,
+            condition = ?
         WHERE name = ?;
         """
         self.conn.execute(

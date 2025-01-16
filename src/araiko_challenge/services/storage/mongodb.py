@@ -43,6 +43,9 @@ class MongoDBCouponStorage(CouponStorage):
         if not coupon_data:
             raise CouponStorageNotFoundError()
 
+        # Remove id to build Coupon
+        del coupon_data["_id"]
+
         return Coupon.model_validate(coupon_data)
 
     # @catch_mongodb_error_and_rollback
@@ -64,16 +67,18 @@ class MongoDBCouponStorage(CouponStorage):
             raise CouponStorageAlreadyExistsError()
 
     # @catch_mongodb_error_and_rollback
-    async def update(self, coupon: CouponUpdate) -> Coupon:
-        await self.get(coupon.name)
+    async def update(self, coupon_update: CouponUpdate) -> Coupon:
+        coupon = await self.get(coupon_update.name)
+        update_data = coupon_update.model_dump(exclude_unset=True)
 
         await self.collection.update_one(
-            {"name": coupon.name}, {"$set": coupon.model_dump(exclude_unset=True)}
+            {"name": coupon_update.name}, {"$set": update_data}
         )
 
-        # note: we are permissive here to allow an empty update
-
-        return Coupon.model_validate(coupon.model_dump())
+        # warning: we do not return the db object :/
+        return Coupon.model_validate(
+            {**coupon.model_dump(), **coupon_update.model_dump(exclude_unset=True)}
+        )
 
     # @catch_mongodb_error_and_rollback
     async def delete(self, name: str) -> None:

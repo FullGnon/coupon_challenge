@@ -51,6 +51,29 @@ Everything is already configured to work right away.
 
 That's all folks ;)
 
+## Run the CLI
+
+I implemented a Typer CLI that utilizes the same services as the API. Alternatively, I could have leveraged FastAPI's OpenAPI specification to generate an SDK for interacting with the API.
+
+### Requirements
+
+You have to set the same environement variable as the app in order to use the proper backend:
+
+```bash
+ARAIKO_CHALLENGE_DB_BACKEND=mongo
+ARAIKO_CHALLENGE_MONGO_DB_URI=mongodb://admin:password@127.0.0.1:27017/
+```
+
+either set directly this variable or use a dotfile:
+
+```bash
+export ARAIKO_CHALLENGE_DB_BACKEND=mongo
+export ARAIKO_CHALLENGE_MONGO_DB_URI=mongodb://admin:password@127.0.0.1:27017/
+uv run soldes coupons --help
+# OR 
+uv run --env-file .env soldes coupons --help
+```
+
 ## Running tests
 
 You can run the tests effortlessly using uv by executing the following command:
@@ -70,3 +93,8 @@ uvx ruff check --fix && uvx ruff format
 ```
 
 Additionally, I recommend using mypy to ensure type safety throughout the project.
+
+
+# Known limitations
+* Update on condition and/or validity remove previous values, the update is not propage :/
+  => how i would do ? 

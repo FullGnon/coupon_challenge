@@ -9,6 +9,7 @@ dependencies = [
     "motor>=3.6.1",
     "pydantic>=2.10.5",
     "pydantic-settings>=2.7.1",
+    "typer>=0.15.1",
 ]
 
 [dependency-groups]
@@ -29,4 +30,5 @@ quote-style = "double"
 indent-style = "space"
 
 [project.scripts]
-soldes = "araiko_challenge.legacy:cli"
+legacy = "araiko_challenge.legacy:cli"
+soldes = "araiko_challenge.cli:app"
