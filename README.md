@@ -2,6 +2,8 @@
 
 For directives see [here](./CHALLENGE.md)
 
+I hope this is easy to understand. Have fun! 😉
+
 ## Requirements
 
 This project requires [uv](https://docs.astral.sh/uv/getting-started/installation) to run. Please ensure `uv` is installed on your system before proceeding.
@@ -95,6 +97,75 @@ uvx ruff check --fix && uvx ruff format
 Additionally, I recommend using mypy to ensure type safety throughout the project.
 
 
-# Known limitations
-* Update on condition and/or validity remove previous values, the update is not propage :/
-  => how i would do ? 
+# Known limitations/bugs
+* Update on condition and/or validity remove previous values, the update is not propagated :/
+
+# Time's up !
+I do not have more time to implements the complex filtering feature. But I would have:
+
+## Created my own query engine based on Pydantic Model
+
+Note: I would first research whether there is an open-source library that already fulfills this functionality.
+
+### Why
+* Database-Agnostic Logic: To not couple the query logic with any database query language, so i can switch db backend as will.
+* Reusability: This query engine could be reused as a library anywhere else
+
+### How
+```python
+# These define simple comparison logic like "equals", "greater or equal", "greater than", ...
+class EqOperator:
+    """"""
+class GeOperator:
+    """"""
+class GtOperator:
+    """"""
+
+# Query object combine multiple predicates or sub-queries to form complex conditions.
+class AndQuery:
+    """"""
+class OrQuery:
+    """"""
+class NotQuery:
+    """"""
+
+class Predicate:
+    """ Represents a single logical condition."""
+    def __init__(self, field, operator, value):
+        self.field = field
+        self.operator = operator
+        self.value = value # Could be empty 
+
+    def validate_field():
+        """Should match a Product attribute"""
+
+# Usage
+# Simple Predicate
+category_electronics = Predicate("category", EqOperator, "electronics")
+price_above_500 = Predicate("price", GtOperator, 500)
+not_furniture = NotQuery(Predicate("category", EqOperator, "furniture"))
+
+# We want a electronics product or a expensive product
+electronics_or_expensive = OrQuery(category_electronics, price_above_500)
+
+# In the case a product can have many category or the product is expensive 
+# we exclude furniture product
+query = AndQuery(electronics_or_expensive, not_furniture)
+
+# Test the product upon query
+apply_query(query, product)
+
+# For each database backend we should have a converter (sharing a single common interface) in order to use database performance.
+```
+
+# Next Steps
+* More tests! I know there are some bugs somewhere; it lacks proper edge case tests.
+* Add a CI/CD pipeline for better code quality and robustness.
+* Add a test coverage report (to the moon!).
+* Automate end-to-end/integration tests on nightly deployments (using Terraform, maybe?).
+* More documentation! I’ve been in a rush lately and focused on code rather than explaining it.
+* Benchmarking to test scalability and suggest an architecture for deployment (load-balancing, backup, ...)
+* Security hardening.
+* API version management.
+* Database version management, with automated migrations if needed.
+* And more, there is always something to do
