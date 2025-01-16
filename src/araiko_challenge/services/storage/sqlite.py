@@ -13,11 +13,14 @@ def catch_sqlite_error_and_rollback():
     raise NotImplementedError()
 
 
-# I could use SQLModel (or SQLAlchemy) instead of managing sqlite engine directly
+# Note: I could use SQLModel (or SQLAlchemy) instead of managing sqlite engine directly
+# Disclaimer: This implementation has not been updated after the improvement made in CouponStorage
+#             for error handling (CouponStorageError). It should still works but it is not tested.
 class SQLiteCouponStorage(CouponStorage):
     table_name: ClassVar[str] = "coupons"
 
     def __init__(self, db_path: str = "coupon.db"):
+        # Warn Log something about this backend being deprecated 
         self.conn = sqlite3.connect(db_path)
         self.conn.row_factory = sqlite3.Row
         self._initialize_table()

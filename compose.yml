@@ -1,6 +1,38 @@
+# This is a really quick compose file and have minimum required service configuration
+# With more times it could be hardened
+
+version: '3.1'
+
 services:
   api:
     build: .
     image: araiko_challenge:lechauve
     ports:
       - "8000:8000"
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: challenge
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./docker/mongo/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - mongo-volume:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_URL: mongodb://admin:password@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+
+volumes:
+  mongo-volume:
