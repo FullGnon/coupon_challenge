@@ -1,9 +1,10 @@
 import pytest
+from fastapi.testclient import TestClient
+
 from coupon_challenge.models.coupon import Coupon
 from coupon_challenge.models.product import Product
 from coupon_challenge.routers.coupons import COUPONS_ROUTE_PREFIX
 from coupon_challenge.services.storage import CouponStorage
-from fastapi.testclient import TestClient
 
 
 @pytest.mark.asyncio

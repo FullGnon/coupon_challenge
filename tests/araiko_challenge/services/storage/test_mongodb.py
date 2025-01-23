@@ -1,6 +1,7 @@
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 import pytest
+
 from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
 from coupon_challenge.services.storage import (
     CouponStorageAlreadyExistsError,

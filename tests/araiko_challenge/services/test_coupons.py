@@ -2,6 +2,7 @@ from datetime import datetime
 from unittest.mock import patch
 
 import pytest
+
 from coupon_challenge.models.coupon import Coupon, CouponCondition, CouponValidity
 from coupon_challenge.models.product import Product
 from coupon_challenge.services.coupons import CouponApplicabilityService

@@ -2,10 +2,11 @@ from contextlib import AbstractContextManager, nullcontext
 from datetime import datetime
 
 import pytest
-from coupon_challenge.models.coupon import Coupon, CouponCondition, CouponValidity
 from pydantic import (
     ValidationError,
 )
+
+from coupon_challenge.models.coupon import Coupon, CouponCondition, CouponValidity
 
 
 @pytest.mark.parametrize(

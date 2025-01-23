@@ -2,6 +2,7 @@ from datetime import datetime
 from unittest.mock import patch
 
 import pytest
+
 from coupon_challenge.legacy import (
     apply_discount,
     coupon_is_applicable,
