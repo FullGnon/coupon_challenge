@@ -1,4 +1,4 @@
-from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
 
 
 class CouponStorageError(Exception):

@@ -2,9 +2,8 @@ import json
 from datetime import datetime
 from typing import Any, NamedTuple
 
+from coupon_challenge.models.product import ProductCategory
 from pydantic import BaseModel, ConfigDict, NonNegativeInt, model_validator
-
-from araiko_challenge.models.product import ProductCategory
 
 
 class CouponCondition(BaseModel):

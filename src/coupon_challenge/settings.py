@@ -10,7 +10,7 @@ class DBBackendEnum(StrEnum):
     sqlite = "sqlite"
 
 
-APP_CHALLENGE_SETTINGS_PREFIX = "araiko_challenge_"
+APP_CHALLENGE_SETTINGS_PREFIX = "coupon_challenge_"
 
 
 class AppChallengeSettings(BaseSettings):

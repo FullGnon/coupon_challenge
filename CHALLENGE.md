@@ -37,7 +37,7 @@ Afin de suivre ta progression et le temps passé sur ce test, il est demandé de
 
 Également, au cours de ton travail, si certains aspects de ce test te semblent triviaux et/ou chronophages à implémenter, tu es libre de laisser des commentaires en TODO afin d'expliquer la démarche que tu aurais suivie, afin de te concentrer sur ce qui a le plus de valeur selon toi.
 
-Une fois fini, tu devras envoyer un email à **e.hupin@araiko.ai** pour confirmer que tu as bien fini.
+Une fois fini, tu devras envoyer un email à **e.hupin@coupon.ai** pour confirmer que tu as bien fini.
 L'évaluation du test se fera la simplicité et le pragmatisme des solutions mises en place, et sur la qualité technique et fonctionnelle du résultat.
 
 Bonne chance :)

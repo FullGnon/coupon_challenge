@@ -14,4 +14,4 @@ WORKDIR /app
 RUN uv sync --frozen --no-cache
 
 # Run the application.
-CMD ["/app/.venv/bin/fastapi", "run", "src/araiko_challenge/main.py"]
+CMD ["/app/.venv/bin/fastapi", "run", "src/coupon_challenge/main.py"]

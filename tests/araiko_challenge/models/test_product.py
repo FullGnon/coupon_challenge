@@ -1,9 +1,8 @@
 from contextlib import AbstractContextManager, nullcontext
 
 import pytest
+from coupon_challenge.models.product import Product
 from pydantic import ValidationError
-
-from araiko_challenge.models.product import Product
 
 
 @pytest.mark.parametrize(

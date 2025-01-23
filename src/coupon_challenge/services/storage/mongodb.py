@@ -1,17 +1,16 @@
 from typing import ClassVar
 
-from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import MongoDsn
-from pymongo.server_api import ServerApi
-
-from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
-from araiko_challenge.services.storage import (
+from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from coupon_challenge.services.storage import (
     CouponStorage,
     CouponStorageAlreadyExistsError,
     CouponStorageCreateError,
     CouponStorageDeleteError,
     CouponStorageNotFoundError,
 )
+from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import MongoDsn
+from pymongo.server_api import ServerApi
 
 
 def catch_mongodb_error_and_rollback():

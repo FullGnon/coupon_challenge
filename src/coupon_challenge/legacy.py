@@ -4,8 +4,8 @@ import math
 import sqlite3
 from datetime import datetime
 
-from araiko_challenge.models.coupon import Coupon
-from araiko_challenge.models.product import Product
+from coupon_challenge.models.coupon import Coupon
+from coupon_challenge.models.product import Product
 
 connection = sqlite3.connect("coupon.db")
 cursor = connection.cursor()

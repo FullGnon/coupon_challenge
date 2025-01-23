@@ -1,24 +1,23 @@
 from typing import Generator
 
-from fastapi import Depends, HTTPException
-
-from araiko_challenge.services.coupons import CouponApplicabilityService
-from araiko_challenge.services.storage import (
+from coupon_challenge.services.coupons import CouponApplicabilityService
+from coupon_challenge.services.storage import (
     CouponStorage,
     CouponStorageAlreadyExistsError,
     CouponStorageError,
     CouponStorageNotFoundError,
     CouponStorageProductNotApplicableError,
 )
-from araiko_challenge.services.storage.mongodb import MongoDBCouponStorage
-from araiko_challenge.services.storage.sqlite import SQLiteCouponStorage
-from araiko_challenge.settings import (
+from coupon_challenge.services.storage.mongodb import MongoDBCouponStorage
+from coupon_challenge.services.storage.sqlite import SQLiteCouponStorage
+from coupon_challenge.settings import (
     AppChallengeSettings,
     DBBackendEnum,
     MongoDBSettings,
     get_app_settings,
     get_mongodb_settings,
 )
+from fastapi import Depends, HTTPException
 
 
 def dep_app_settings() -> AppChallengeSettings:

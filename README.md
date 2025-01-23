@@ -1,4 +1,4 @@
-# Araïko Challenge
+# Coupon Challenge
 
 For directives see [here](./CHALLENGE.md)
 
@@ -28,14 +28,14 @@ The venv will be automatically created and synced based on pyproject.toml.
 In order to configure the application in dev mode you need to create a dotfile `.env` containing settings:
 
 ```bash
-ARAIKO_CHALLENGE_DB_BACKEND=mongo
-ARAIKO_CHALLENGE_MONGO_DB_URI=mongodb://admin:password@127.0.0.1:27017/
+COUPON_CHALLENGE_DB_BACKEND=mongo
+COUPON_CHALLENGE_MONGO_DB_URI=mongodb://admin:password@127.0.0.1:27017/
 ```
 
 To run the API in dev mode, execute the following command:
 
 ```bash
-uv run --env-file .env fastapi dev src/araiko_challenge/main.py
+uv run --env-file .env fastapi dev src/coupon_challenge/main.py
 ```
 The API will be available at: http://127.0.0.1:8000
 Swagger documentation can be accessed at: http://127.0.0.1:8000/docs
@@ -62,15 +62,15 @@ I implemented a Typer CLI that utilizes the same services as the API. Alternativ
 You have to set the same environement variable as the app in order to use the proper backend:
 
 ```bash
-ARAIKO_CHALLENGE_DB_BACKEND=mongo
-ARAIKO_CHALLENGE_MONGO_DB_URI=mongodb://admin:password@127.0.0.1:27017/
+COUPON_CHALLENGE_DB_BACKEND=mongo
+COUPON_CHALLENGE_MONGO_DB_URI=mongodb://admin:password@127.0.0.1:27017/
 ```
 
 either set directly this variable or use a dotfile:
 
 ```bash
-export ARAIKO_CHALLENGE_DB_BACKEND=mongo
-export ARAIKO_CHALLENGE_MONGO_DB_URI=mongodb://admin:password@127.0.0.1:27017/
+export COUPON_CHALLENGE_DB_BACKEND=mongo
+export COUPON_CHALLENGE_MONGO_DB_URI=mongodb://admin:password@127.0.0.1:27017/
 uv run soldes coupons --help
 # OR 
 uv run --env-file .env soldes coupons --help

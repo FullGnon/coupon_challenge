@@ -2,8 +2,8 @@ import json
 import sqlite3
 from typing import ClassVar
 
-from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
-from araiko_challenge.services.storage import CouponStorage
+from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from coupon_challenge.services.storage import CouponStorage
 
 
 def catch_sqlite_error_and_rollback():

@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends
-
-from araiko_challenge.dependencies import get_coupon_service, get_coupon_storage
-from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
-from araiko_challenge.models.product import Product
-from araiko_challenge.services.coupons import CouponApplicabilityService
-from araiko_challenge.services.storage import (
+from coupon_challenge.dependencies import get_coupon_service, get_coupon_storage
+from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from coupon_challenge.models.product import Product
+from coupon_challenge.services.coupons import CouponApplicabilityService
+from coupon_challenge.services.storage import (
     CouponStorage,
     CouponStorageProductNotApplicableError,
 )
+from fastapi import APIRouter, Depends
 
 COUPONS_ROUTE_PREFIX = "/coupons"
 

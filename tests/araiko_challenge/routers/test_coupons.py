@@ -1,10 +1,9 @@
 import pytest
+from coupon_challenge.models.coupon import Coupon
+from coupon_challenge.models.product import Product
+from coupon_challenge.routers.coupons import COUPONS_ROUTE_PREFIX
+from coupon_challenge.services.storage import CouponStorage
 from fastapi.testclient import TestClient
-
-from araiko_challenge.models.coupon import Coupon
-from araiko_challenge.models.product import Product
-from araiko_challenge.routers.coupons import COUPONS_ROUTE_PREFIX
-from araiko_challenge.services.storage import CouponStorage
 
 
 @pytest.mark.asyncio

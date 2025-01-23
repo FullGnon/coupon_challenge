@@ -1,8 +1,8 @@
 import math
 from datetime import datetime
 
-from araiko_challenge.models.coupon import Coupon
-from araiko_challenge.models.product import Product
+from coupon_challenge.models.coupon import Coupon
+from coupon_challenge.models.product import Product
 
 
 class CouponApplicabilityService:

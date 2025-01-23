@@ -1,5 +1,5 @@
 [project]
-name = "araiko_challenge"
+name = "coupon_challenge"
 version = "0.1.0"
 description = "Araïko challenge for thomas lechauve"
 readme = "README.md"
@@ -30,5 +30,5 @@ quote-style = "double"
 indent-style = "space"
 
 [project.scripts]
-legacy = "araiko_challenge.legacy:cli"
-soldes = "araiko_challenge.cli:app"
+legacy = "coupon_challenge.legacy:cli"
+soldes = "coupon_challenge.cli:app"

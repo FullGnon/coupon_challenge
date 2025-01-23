@@ -2,14 +2,13 @@ from datetime import datetime
 from unittest.mock import patch
 
 import pytest
-
-from araiko_challenge.legacy import (
+from coupon_challenge.legacy import (
     apply_discount,
     coupon_is_applicable,
     coupon_is_valid,
 )
-from araiko_challenge.models.coupon import Coupon, CouponCondition, CouponValidity
-from araiko_challenge.models.product import Product
+from coupon_challenge.models.coupon import Coupon, CouponCondition, CouponValidity
+from coupon_challenge.models.product import Product
 
 
 @pytest.mark.parametrize(
@@ -142,6 +141,6 @@ def test_coupon_is_valid(
         name="coupon", discount=10, validity=CouponValidity(start=start, end=end)
     )
 
-    with patch("araiko_challenge.legacy.datetime") as datetime_mock:
+    with patch("coupon_challenge.legacy.datetime") as datetime_mock:
         datetime_mock.now.return_value = datetime.fromisoformat(moment)
         assert coupon_is_valid(coupon) == expected_result

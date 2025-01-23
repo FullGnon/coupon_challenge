@@ -1,21 +1,20 @@
 from typing import Generator, TypeVar
 
 import pytest
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
-from fastapi.testclient import TestClient
-
-from araiko_challenge.dependencies import get_coupon_storage
-from araiko_challenge.main import app
-from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
-from araiko_challenge.services.coupons import CouponApplicabilityService
-from araiko_challenge.services.storage import (
+from coupon_challenge.dependencies import get_coupon_storage
+from coupon_challenge.main import app
+from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from coupon_challenge.services.coupons import CouponApplicabilityService
+from coupon_challenge.services.storage import (
     CouponStorage,
     CouponStorageAlreadyExistsError,
     CouponStorageError,
     CouponStorageNotFoundError,
     CouponStorageProductNotApplicableError,
 )
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from fastapi.testclient import TestClient
 
 T = TypeVar("T")
 

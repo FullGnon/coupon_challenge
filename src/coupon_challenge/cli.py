@@ -3,26 +3,25 @@ from functools import wraps
 from typing import Annotated
 
 import typer
-from rich import print
-from rich.console import Console
-from rich.table import Table
-
-from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
-from araiko_challenge.models.product import Product
-from araiko_challenge.services.coupons import CouponApplicabilityService
-from araiko_challenge.services.storage import (
+from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from coupon_challenge.models.product import Product
+from coupon_challenge.services.coupons import CouponApplicabilityService
+from coupon_challenge.services.storage import (
     CouponStorageAlreadyExistsError,
     CouponStorageError,
     CouponStorageNotFoundError,
     CouponStorageProductNotApplicableError,
 )
-from araiko_challenge.services.storage.mongodb import MongoDBCouponStorage
-from araiko_challenge.services.storage.sqlite import SQLiteCouponStorage
-from araiko_challenge.settings import (
+from coupon_challenge.services.storage.mongodb import MongoDBCouponStorage
+from coupon_challenge.services.storage.sqlite import SQLiteCouponStorage
+from coupon_challenge.settings import (
     DBBackendEnum,
     get_app_settings,
     get_mongodb_settings,
 )
+from rich import print
+from rich.console import Console
+from rich.table import Table
 
 app = typer.Typer()
 coupons_app = typer.Typer()

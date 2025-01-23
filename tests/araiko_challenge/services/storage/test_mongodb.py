@@ -1,21 +1,20 @@
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 import pytest
-
-from araiko_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
-from araiko_challenge.services.storage import (
+from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from coupon_challenge.services.storage import (
     CouponStorageAlreadyExistsError,
     CouponStorageCreateError,
     CouponStorageDeleteError,
     CouponStorageNotFoundError,
 )
-from araiko_challenge.services.storage.mongodb import MongoDBCouponStorage
+from coupon_challenge.services.storage.mongodb import MongoDBCouponStorage
 
 
 @pytest.fixture
 def mock_mongo_client():
     with patch(
-        "araiko_challenge.services.storage.mongodb.AsyncIOMotorClient"
+        "coupon_challenge.services.storage.mongodb.AsyncIOMotorClient"
     ) as mock_client:
         yield mock_client
 
