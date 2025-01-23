@@ -9,6 +9,7 @@ dependencies = [
     "motor>=3.6.1",
     "pydantic>=2.10.5",
     "pydantic-settings>=2.7.1",
+    "pyright>=1.1.392.post0",
     "typer>=0.15.1",
 ]
 
@@ -28,6 +29,11 @@ select = ["E4", "E7", "E9", "F", "I"]
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+
+[tool.pyright]
+include = ["src"]
+exclude = ["**/__pycache__"]
+ignore = ["src/coupon_challenge/legacy.py"]
 
 [project.scripts]
 legacy = "coupon_challenge.legacy:cli"

@@ -3,7 +3,17 @@ from functools import wraps
 from typing import Annotated
 
 import typer
-from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
+from rich import print
+from rich.console import Console
+from rich.table import Table
+
+from coupon_challenge.models.coupon import (
+    Coupon,
+    CouponCondition,
+    CouponCreate,
+    CouponUpdate,
+    CouponValidity,
+)
 from coupon_challenge.models.product import Product
 from coupon_challenge.services.coupons import CouponApplicabilityService
 from coupon_challenge.services.storage import (
@@ -19,9 +29,6 @@ from coupon_challenge.settings import (
     get_app_settings,
     get_mongodb_settings,
 )
-from rich import print
-from rich.console import Console
-from rich.table import Table
 
 app = typer.Typer()
 coupons_app = typer.Typer()
@@ -29,13 +36,13 @@ app.add_typer(coupons_app, name="coupons")
 
 
 @app.callback()
-def main():
+def main(ctx: typer.Context):
     settings = get_app_settings()
     if settings.db_backend == DBBackendEnum.mongo:
         mongo_settings = get_mongodb_settings()
-        app.storage = MongoDBCouponStorage(mongo_settings.db_uri)
+        ctx.params["storage"] = MongoDBCouponStorage(mongo_settings.db_uri)
     elif settings.db_backend == DBBackendEnum.sqlite:
-        app.storage = SQLiteCouponStorage()
+        ctx.params["storage"] = SQLiteCouponStorage()
 
 
 def print_coupons(coupons: list[Coupon]) -> None:
@@ -104,7 +111,7 @@ def prompt_for_coupon_create() -> CouponCreate:
     validity = None
     if start:
         end = typer.prompt("Validity.end")
-        validity = {"start": start, "end": end}
+        validity = CouponValidity(start=start, end=end)
     condition = {}
     category = typer.prompt("Condition.category", default="")
     if category:
@@ -112,6 +119,8 @@ def prompt_for_coupon_create() -> CouponCreate:
     price_above = typer.prompt("Condition.price_above", default="")
     if price_above:
         condition["price_above"] = price_above
+
+    condition = None if not condition else CouponCondition(**condition)
 
     return CouponCreate(
         name=name, discount=discount, validity=validity, condition=condition
@@ -160,18 +169,18 @@ def handle_errors(func):
 @coupons_app.command()
 @handle_errors
 @async_command
-async def list() -> None:
+async def list(ctx: typer.Context) -> None:
     """List all registered coupons"""
-    coupons = await app.storage.get_all()
+    coupons = await ctx.params["storage"].get_all()
     print_coupons(coupons)
 
 
 @coupons_app.command()
 @handle_errors
 @async_command
-async def get(name: str) -> None:
+async def get(ctx: typer.Context, name: str) -> None:
     """Get an existing coupon"""
-    coupon = await app.storage.get(name)
+    coupon = await ctx.params["storage"].get(name)
     print_coupon(coupon)
 
 
@@ -179,6 +188,7 @@ async def get(name: str) -> None:
 @handle_errors
 @async_command
 async def update(
+    ctx: typer.Context,
     coupon_update: Annotated[
         CouponUpdate | None, typer.Argument(parser=CouponUpdate.model_validate_json)
     ] = None,
@@ -186,7 +196,7 @@ async def update(
     """Update an existing coupon"""
     coupon_update = coupon_update or prompt_for_coupon_update()
 
-    coupon = await app.storage.update(coupon_update)
+    coupon = await ctx.params["storage"].update(coupon_update)
     print("Coupon Updated :)")
     print_coupon(coupon)
 
@@ -195,6 +205,7 @@ async def update(
 @handle_errors
 @async_command
 async def create(
+    ctx: typer.Context,
     coupon_create: Annotated[
         CouponCreate | None, typer.Argument(parser=CouponCreate.model_validate_json)
     ] = None,
@@ -202,7 +213,7 @@ async def create(
     """Create a coupon"""
     coupon_create = coupon_create or prompt_for_coupon_create()
 
-    coupon = await app.storage.create(coupon_create)
+    coupon = await ctx.params["storage"].create(coupon_create)
     print("Coupon Created :)")
     print_coupon(coupon)
 
@@ -210,9 +221,9 @@ async def create(
 @coupons_app.command()
 @handle_errors
 @async_command
-async def delete(name: str) -> None:
+async def delete(ctx: typer.Context, name: str) -> None:
     """Delete an existing coupon"""
-    await app.storage.delete(name)
+    await ctx.params["storage"].delete(name)
 
     print(f"Coupon {name} Deleted :)")
 
@@ -221,6 +232,7 @@ async def delete(name: str) -> None:
 @handle_errors
 @async_command
 async def apply(
+    ctx: typer.Context,
     coupon_name: str,
     product: Annotated[
         Product | None, typer.Argument(parser=Product.model_validate_json)
@@ -231,7 +243,7 @@ async def apply(
 
     service = CouponApplicabilityService()
 
-    coupon = await app.storage.get(coupon_name)
+    coupon = await ctx.params["storage"].get(coupon_name)
 
     print_coupon(coupon)
 

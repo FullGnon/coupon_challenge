@@ -1,6 +1,10 @@
 from typing import Generator, TypeVar
 
 import pytest
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from fastapi.testclient import TestClient
+
 from coupon_challenge.dependencies import get_coupon_storage
 from coupon_challenge.main import app
 from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
@@ -12,9 +16,6 @@ from coupon_challenge.services.storage import (
     CouponStorageNotFoundError,
     CouponStorageProductNotApplicableError,
 )
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
-from fastapi.testclient import TestClient
 
 T = TypeVar("T")
 
@@ -35,21 +36,21 @@ class InMemoryCouponStorage(CouponStorage):
 
         return self.data[name]
 
-    async def create(self, coupon: CouponCreate) -> Coupon:
-        if coupon.name in self.data:
+    async def create(self, coupon_create: CouponCreate) -> Coupon:
+        if coupon_create.name in self.data:
             raise CouponStorageAlreadyExistsError()
 
-        self.data[coupon.name] = Coupon.model_validate(coupon.model_dump())
+        self.data[coupon_create.name] = Coupon.model_validate(coupon_create.model_dump())
 
-        return self.data[coupon.name]
+        return self.data[coupon_create.name]
 
-    async def update(self, coupon: CouponUpdate) -> Coupon:
-        if coupon.name not in self.data:
+    async def update(self, coupon_update: CouponUpdate) -> Coupon:
+        if coupon_update.name not in self.data:
             raise CouponStorageNotFoundError()
 
-        self.data[coupon.name] = Coupon.model_validate(coupon.model_dump())
+        self.data[coupon_update.name] = Coupon.model_validate(coupon_update.model_dump())
 
-        return self.data[coupon.name]
+        return self.data[coupon_update.name]
 
     async def delete(self, name: str) -> None:
         if name not in self.data:

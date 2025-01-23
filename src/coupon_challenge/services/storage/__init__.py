@@ -33,13 +33,13 @@ class CouponStorage:
     async def get_all(self) -> list[Coupon]:
         raise NotImplementedError()
 
-    async def get(self, name: str) -> Coupon | None:
+    async def get(self, name: str) -> Coupon:
         raise NotImplementedError()
 
-    async def create(self, coupon: CouponCreate) -> Coupon:
+    async def create(self, coupon_create: CouponCreate) -> Coupon:
         raise NotImplementedError()
 
-    async def update(self, coupon: CouponUpdate) -> Coupon:
+    async def update(self, coupon_update: CouponUpdate) -> Coupon:
         raise NotImplementedError()
 
     async def delete(self, name: str) -> None:

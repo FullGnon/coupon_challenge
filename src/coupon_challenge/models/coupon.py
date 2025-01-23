@@ -2,8 +2,9 @@ import json
 from datetime import datetime
 from typing import Any, NamedTuple
 
-from coupon_challenge.models.product import ProductCategory
 from pydantic import BaseModel, ConfigDict, NonNegativeInt, model_validator
+
+from coupon_challenge.models.product import ProductCategory
 
 
 class CouponCondition(BaseModel):
@@ -30,7 +31,7 @@ class CouponBase(BaseModel):
     validity: CouponValidity | None = None
 
     @model_validator(mode="after")
-    def check_valid_period(self) -> "Coupon":
+    def check_valid_period(self) -> "CouponBase":
         if self.validity and self.validity.start > self.validity.end:
             msg = "Invalid period, start > end"
             raise ValueError(msg)
@@ -59,7 +60,7 @@ class Coupon(CouponBase):
 
     @property
     def discount_raw(self: "Coupon") -> str:
-        return f"{self.discount}%" if self.is_percent else self.discount
+        return f"{self.discount}%" if self.is_percent else str(self.discount)
 
 
 class CouponDTO(CouponBase):

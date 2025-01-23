@@ -1,5 +1,8 @@
 from typing import Generator
 
+from fastapi import Depends, HTTPException
+
+from coupon_challenge.exceptions import CouponChallengeSettingsError
 from coupon_challenge.services.coupons import CouponApplicabilityService
 from coupon_challenge.services.storage import (
     CouponStorage,
@@ -17,7 +20,6 @@ from coupon_challenge.settings import (
     get_app_settings,
     get_mongodb_settings,
 )
-from fastapi import Depends, HTTPException
 
 
 def dep_app_settings() -> AppChallengeSettings:
@@ -40,6 +42,8 @@ def get_coupon_storage(
     elif settings.db_backend == DBBackendEnum.sqlite:
         # TODO: make settings for sqlite backend
         coupon_storage = SQLiteCouponStorage()
+    else:
+        raise CouponChallengeSettingsError()
 
     try:
         yield coupon_storage

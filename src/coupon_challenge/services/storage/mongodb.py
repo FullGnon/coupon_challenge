@@ -1,5 +1,9 @@
 from typing import ClassVar
 
+from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import MongoDsn
+from pymongo.server_api import ServerApi
+
 from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
 from coupon_challenge.services.storage import (
     CouponStorage,
@@ -8,9 +12,6 @@ from coupon_challenge.services.storage import (
     CouponStorageDeleteError,
     CouponStorageNotFoundError,
 )
-from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import MongoDsn
-from pymongo.server_api import ServerApi
 
 
 def catch_mongodb_error_and_rollback():
@@ -49,20 +50,20 @@ class MongoDBCouponStorage(CouponStorage):
         return Coupon.model_validate(coupon_data)
 
     # @catch_mongodb_error_and_rollback
-    async def create(self, coupon: CouponCreate) -> Coupon:
+    async def create(self, coupon_create: CouponCreate) -> Coupon:
         try:
             # FIXME: We may not need to get first, see if somehow insert_one can return an error
             #        if the name is already taken in database
-            await self.get(coupon.name)
+            await self.get(coupon_create.name)
         except CouponStorageNotFoundError:
             # FIXME: thinking about it, running nominal code in a except is quite unsual (Tech Debt)
-            result = await self.collection.insert_one(coupon.model_dump())
+            result = await self.collection.insert_one(coupon_create.model_dump())
 
             if not result.inserted_id:
                 raise CouponStorageCreateError()
 
             # FIXME: we may use returned object from db instead of input data
-            return Coupon.model_validate(coupon.model_dump())
+            return Coupon.model_validate(coupon_create.model_dump())
         else:
             raise CouponStorageAlreadyExistsError()
 

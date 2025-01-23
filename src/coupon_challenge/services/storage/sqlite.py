@@ -3,7 +3,11 @@ import sqlite3
 from typing import ClassVar
 
 from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
-from coupon_challenge.services.storage import CouponStorage
+from coupon_challenge.services.storage import (
+    CouponStorage,
+    CouponStorageAlreadyExistsError,
+    CouponStorageNotFoundError,
+)
 
 
 def catch_sqlite_error_and_rollback():
@@ -56,21 +60,23 @@ class SQLiteCouponStorage(CouponStorage):
         return [self._from_rowdict_to_coupon(dict(row)) for row in cursor]
 
     # @catch_sqlite_error_and_rollback
-    async def get(self, name: str) -> Coupon | None:
+    async def get(self, name: str) -> Coupon:
         cursor = self.conn.execute(
             f"SELECT * FROM {self.table_name} WHERE name = '{name}';"
         )
         self.conn.commit()
         response = cursor.fetchone()
 
-        return self._from_rowdict_to_coupon(response) if response else None
+        if not response:
+            raise CouponStorageNotFoundError()
+
+        return self._from_rowdict_to_coupon(response)
 
     # @catch_sqlite_error_and_rollback
-    async def create(self, coupon: CouponCreate) -> Coupon:
-        existing_coupon = await self.get(coupon.name)
+    async def create(self, coupon_create: CouponCreate) -> Coupon:
+        existing_coupon = await self.get(coupon_create.name)
         if existing_coupon:
-            # TODO: This exception should be specific to this app in order to properly handle error on API side and CLI side
-            raise IndexError
+            raise CouponStorageAlreadyExistsError()
 
         query = f"""
         INSERT INTO {self.table_name} (name, discount, validity, condition)
@@ -79,19 +85,23 @@ class SQLiteCouponStorage(CouponStorage):
         self.conn.execute(
             query,
             (
-                coupon.name,
-                coupon.discount,
-                coupon.validity.to_json_string() if coupon.validity else "",
-                coupon.condition.model_dump_json() if coupon.condition else "",
+                coupon_create.name,
+                coupon_create.discount,
+                coupon_create.validity.to_json_string()
+                if coupon_create.validity
+                else "",
+                coupon_create.condition.model_dump_json()
+                if coupon_create.condition
+                else "",
             ),
         )
         self.conn.commit()
 
-        return Coupon.model_validate(coupon.model_dump())
+        return Coupon.model_validate(coupon_create.model_dump())
 
     # @catch_sqlite_error_and_rollback
-    async def update(self, coupon: CouponUpdate) -> Coupon:
-        existing_coupon = await self.get(coupon.name)
+    async def update(self, coupon_update: CouponUpdate) -> Coupon:
+        existing_coupon = await self.get(coupon_update.name)
         if not existing_coupon:
             # TODO: This exception should be specific to this app in order to properly handle error on API side and CLI side
             raise IndexError
@@ -107,15 +117,19 @@ class SQLiteCouponStorage(CouponStorage):
         self.conn.execute(
             query,
             (
-                coupon.discount,
-                coupon.validity.to_json_string() if coupon.validity else "",
-                coupon.condition.model_dump_json() if coupon.condition else "",
-                coupon.name,
+                coupon_update.discount,
+                coupon_update.validity.to_json_string()
+                if coupon_update.validity
+                else "",
+                coupon_update.condition.model_dump_json()
+                if coupon_update.condition
+                else "",
+                coupon_update.name,
             ),
         )
         self.conn.commit()
 
-        return existing_coupon.model_copy(update=coupon.model_dump())
+        return existing_coupon.model_copy(update=coupon_update.model_dump())
 
     # @catch_sqlite_error_and_rollback
     async def delete(self, name: str) -> None:

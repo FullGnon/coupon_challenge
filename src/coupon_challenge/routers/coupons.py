@@ -1,3 +1,5 @@
+from fastapi import APIRouter, Depends
+
 from coupon_challenge.dependencies import get_coupon_service, get_coupon_storage
 from coupon_challenge.models.coupon import Coupon, CouponCreate, CouponUpdate
 from coupon_challenge.models.product import Product
@@ -6,7 +8,6 @@ from coupon_challenge.services.storage import (
     CouponStorage,
     CouponStorageProductNotApplicableError,
 )
-from fastapi import APIRouter, Depends
 
 COUPONS_ROUTE_PREFIX = "/coupons"
 

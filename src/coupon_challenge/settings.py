@@ -37,4 +37,5 @@ def get_app_settings() -> AppChallengeSettings:
 
 @lru_cache
 def get_mongodb_settings() -> MongoDBSettings:
-    return MongoDBSettings()
+    # Ignore typing as we intend to pass every settings from environment variables
+    return MongoDBSettings()  # type: ignore
